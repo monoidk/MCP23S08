@@ -44,6 +44,9 @@ public:
 	void setOutputStates(uint8_t states);
 	void setPinModes(uint8_t modes);
 	void enablePullups(uint8_t enables);
+
+	static const uint8_t PIN_MODE_INPUT_ALL = 0x00;
+	static const uint8_t PIN_MODE_OUTPUT_ALL = 0xff;
 	
 	// advanced, get settings for all pin at once
 	uint8_t getInputStates();

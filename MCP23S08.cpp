@@ -29,7 +29,10 @@ void MCP23S08::begin() {
 	spi.transfer(MCP23S08_IODIR);	//set address pointer to first register
 	spi.transfer(0xFF);				// reset first register
 	for (uint8_t i = 0; i < MCP23S08_OLAT; i++) {
-		spi.transfer(0x00);			// reset other 10 registers
+		if (MCP23S08_IOCON == i)
+			spi.transfer(0x08);			// enable hardware address (HAEN)
+		else
+			spi.transfer(0x00);			// reset other 10 registers
 	}
 	digitalWrite(csPin, HIGH);
 	spi.endTransaction();

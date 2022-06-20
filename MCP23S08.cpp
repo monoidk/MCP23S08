@@ -12,26 +12,27 @@
 
 /*##################################### PUBLIC FUNCTIONS #####################################*/
 
-MCP23S08::MCP23S08(uint8_t csPin) : csPin(csPin) {}
-
-
-MCP23S08::MCP23S08(uint8_t csPin, uint8_t deviceAddr) : csPin(csPin) {
+MCP23S08::MCP23S08(SPIClass & spi,
+		   uint8_t csPin,
+		   uint8_t deviceAddr,
+		   uint32_t spi_speed)
+: spi(spi), csPin(csPin), spi_settings(spi_speed, MSBFIRST, SPI_MODE0) {
 	deviceOpcode |= ((deviceAddr & 0x03) << 1);
 }
 
 
 void MCP23S08::begin() {
-	SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
+	spi.beginTransaction(spi_settings);
 	pinMode(csPin, OUTPUT);
 	digitalWrite(csPin, LOW);
 	// reset all registers to default:
-	SPI.transfer(MCP23S08_IODIR);	//set address pointer to first register
-	SPI.transfer(0xFF);				// reset first register
+	spi.transfer(MCP23S08_IODIR);	//set address pointer to first register
+	spi.transfer(0xFF);				// reset first register
 	for (uint8_t i = 0; i < MCP23S08_OLAT; i++) {
-		SPI.transfer(0x00);			// reset other 10 registers
+		spi.transfer(0x00);			// reset other 10 registers
 	}
 	digitalWrite(csPin, HIGH);
-	SPI.endTransaction();
+	spi.endTransaction();
 }
 
 
@@ -112,24 +113,24 @@ uint8_t MCP23S08::getEnabledPullups() {
 /*##################################### PRIVATE FUNCTIONS #####################################*/
 
 void MCP23S08::writeRegister(uint8_t address, uint8_t data) {
-	SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
+	spi.beginTransaction(spi_settings);
 	digitalWrite(csPin, LOW);
-	SPI.transfer(deviceOpcode);		// initialize transfer with opcode and R/W-flag cleared
-	SPI.transfer(address);
-	SPI.transfer(data);
+	spi.transfer(deviceOpcode);		// initialize transfer with opcode and R/W-flag cleared
+	spi.transfer(address);
+	spi.transfer(data);
 	digitalWrite(csPin, HIGH);
-	SPI.endTransaction();
+	spi.endTransaction();
 }
 
 
 uint8_t MCP23S08::readRegister(uint8_t address) {
 	uint8_t data;
-	SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
+	spi.beginTransaction(spi_settings);
 	digitalWrite(csPin, LOW);
-	SPI.transfer(deviceOpcode | 1);		// initialize transfer with opcode and R/W-flag set
-	SPI.transfer(address);
-	data = SPI.transfer(0);
+	spi.transfer(deviceOpcode | 1);        // initialize transfer with opcode and R/W-flag set
+	spi.transfer(address);
+	data = spi.transfer(0);
 	digitalWrite(csPin, HIGH);
-	SPI.endTransaction();
+	spi.endTransaction();
 	return data;
 }

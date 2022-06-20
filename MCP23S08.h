@@ -30,8 +30,7 @@
 class MCP23S08 {
 public:
 	// constructors
-	MCP23S08(uint8_t csPin);
-	MCP23S08(uint8_t csPin, uint8_t deviceAddr);
+	MCP23S08(SPIClass & spi, uint8_t csPin, uint8_t deviceAddr, uint32_t spi_speed = 1000000);
 	
 	// call in setup
 	void begin();
@@ -54,8 +53,10 @@ public:
 	
 private:
 	// private variables
+	SPIClass & spi;
 	uint8_t csPin;
 	uint8_t deviceOpcode = 0x40;
+	SPISettings spi_settings;
 	
 	// low level SPI communication
 	void writeRegister(uint8_t address, uint8_t data);

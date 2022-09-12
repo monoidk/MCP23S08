@@ -37,6 +37,11 @@ void MCP23S08::begin() {
 		digitalWrite(csPin, HIGH);
 		spi.endTransaction();
 	}
+}
+
+
+// reset all registers to default:
+void MCP23S08::reset() {
 	spi.beginTransaction(spi_settings);
 	digitalWrite(csPin, LOW);
 	spi.transfer(deviceOpcode);	// initialize transfer with opcode and R/W-flag cleared

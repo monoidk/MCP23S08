@@ -34,6 +34,9 @@ public:
 	
 	// call in setup
 	void begin();
+
+	// reset all registers (unneeded for defaults from POR)
+	void reset();
 	
 	// usage equivalent to the default IDE functions, see examples
 	bool digitalReadIO(uint8_t pin);

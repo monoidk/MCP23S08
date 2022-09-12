@@ -15,21 +15,35 @@
 MCP23S08::MCP23S08(SPIClass & spi,
 		   uint8_t csPin,
 		   uint8_t deviceAddr,
+		   bool haen,
 		   uint32_t spi_speed)
-: spi(spi), csPin(csPin), spi_settings(spi_speed, MSBFIRST, SPI_MODE0) {
+: spi(spi), csPin(csPin), haen(haen), spi_settings(spi_speed, MSBFIRST, SPI_MODE0) {
 	deviceOpcode |= ((deviceAddr & 0x03) << 1);
 }
 
 
 void MCP23S08::begin() {
-	spi.beginTransaction(spi_settings);
+	// Why do we initialize the pin here
+	// yet expect the spi bus to be initialized?
 	pinMode(csPin, OUTPUT);
+
+	// enable chip hardware addresses
+	if (haen) {
+		spi.beginTransaction(spi_settings);
+		digitalWrite(csPin, LOW);
+		spi.transfer(0x40);  // command write, address 0 (hardware addressing is disabled on POR)
+		spi.transfer(MCP23S08_IOCON);
+		spi.transfer(0x08);
+		digitalWrite(csPin, HIGH);
+		spi.endTransaction();
+	}
+	spi.beginTransaction(spi_settings);
 	digitalWrite(csPin, LOW);
-	// reset all registers to default:
+	spi.transfer(deviceOpcode);	// initialize transfer with opcode and R/W-flag cleared
 	spi.transfer(MCP23S08_IODIR);	//set address pointer to first register
 	spi.transfer(0xFF);				// reset first register
 	for (uint8_t i = 0; i < MCP23S08_OLAT; i++) {
-		if (MCP23S08_IOCON == i)
+		if (haen && (MCP23S08_IOCON == i))
 			spi.transfer(0x08);			// enable hardware address (HAEN)
 		else
 			spi.transfer(0x00);			// reset other 10 registers

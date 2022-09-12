@@ -62,8 +62,8 @@ private:
 	SPIClass & spi;
 	uint8_t csPin;
 	uint8_t deviceOpcode = 0x40;
-	SPISettings spi_settings;
 	bool haen;
+	SPISettings spi_settings;
 	
 	// low level SPI communication
 	void writeRegister(uint8_t address, uint8_t data);

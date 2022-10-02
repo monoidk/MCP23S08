@@ -23,9 +23,11 @@ MCP23S08::MCP23S08(SPIClass & spi,
 
 
 void MCP23S08::begin() {
-	// Why do we initialize the pin here
-	// yet expect the spi bus to be initialized?
-	pinMode(csPin, OUTPUT);
+	/* Why do we initialize the pin here
+	yet expect the spi bus to be initialized?
+	Good question, not sure but, maybe the ESP32 SPI is not yet inialised.*/
+	
+	pinMode(csPin, OUTPUT);		// Required for ESP32 devices.
 
 	// enable chip hardware addresses
 	if (haen) {

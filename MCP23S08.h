@@ -10,7 +10,7 @@
 #ifndef __MCP23S08_h__
 #define __MCP23S08_h__
 
-#include "Arduino.h"
+#include "Arduino.h"		// Required for ESP32 devices.
 #include <SPI.h>
 
 

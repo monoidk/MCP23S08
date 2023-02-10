@@ -39,23 +39,23 @@ public:
 	void reset();
 	
 	// usage equivalent to the default IDE functions, see examples
-	bool digitalReadIO(uint8_t pin);
-	void digitalWriteIO(uint8_t pin, bool state);
-	void pinModeIO(uint8_t pin, uint8_t mode);
+	bool digitalReadIO(uint8_t pin);               // equiv. (bitRead(MCP23S::readPort())?HIGH:LOW); doesn't read cached OLAT
+	void digitalWriteIO(uint8_t pin, bool state);  // only sets OLAT; not pullup on INPUT ports
+	void pinModeIO(uint8_t pin, uint8_t mode);     // equiv. MCP23S::pinMode
 	
 	// advanced, write settings for all pins at once
-	void setOutputStates(uint8_t states);
-	void setPinModes(uint8_t modes);
-	void enablePullups(uint8_t enables);
+	void setOutputStates(uint8_t states);          // equiv. MCP23S::writePort
+	void setPinModes(uint8_t modes);               // equiv. MCP23S::setDirsInput(~modes)
+	void enablePullups(uint8_t enables);           // equiv. MSP23S::setPullups
 
 	static const uint8_t PIN_MODE_INPUT_ALL = 0x00;
 	static const uint8_t PIN_MODE_OUTPUT_ALL = 0xff;
 	
 	// advanced, get settings for all pin at once
-	uint8_t getInputStates();
-	uint8_t getOutputStates();
-	uint8_t getPinModes();
-	uint8_t getEnabledPullups();
+	uint8_t getInputStates();                      // equiv. MCP23S::readPort
+	uint8_t getOutputStates();                     // equiv. MCP23S::writePort
+	uint8_t getPinModes();                         // equiv. ~(MCP23S::getDirsInput())
+	uint8_t getEnabledPullups();                   // equiv. MCP23S::getPullups
 	
 private:
 	// private variables

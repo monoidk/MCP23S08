@@ -10,6 +10,7 @@
 #ifndef __MCP23S08_h__
 #define __MCP23S08_h__
 
+#include "Arduino.h"		// Required for ESP32 devices.
 #include <SPI.h>
 
 
@@ -25,6 +26,7 @@
 #define MCP23S08_INTCAP		0x08
 #define MCP23S08_GPIO		0x09
 #define MCP23S08_OLAT		0x0A
+#define MCP23S08_IOCON_HAEN	0x08
 
 
 class MCP23S08 {
